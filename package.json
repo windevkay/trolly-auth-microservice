@@ -4,7 +4,7 @@
   "description": "Auth Microservice for Trolly",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node-dev src/index.ts"
+    "start": "ts-node-dev --poll src/index.ts"
   },
   "author": "Kola Adebayo",
   "license": "MIT",
