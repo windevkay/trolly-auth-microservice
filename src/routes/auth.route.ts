@@ -1,10 +1,27 @@
 import express, { Router, Request, Response } from "express";
+import { validationResult } from "express-validator";
+
+import AuthController from "../controllers/auth.controller";
+
+import { sanitizeSignupParams } from "../middleware";
+
+const authController = new AuthController();
 
 const router: Router = express.Router();
 
-router.post("/signup", (req: Request, res: Response) => {
-  res.send("Hi there");
-});
+router.post(
+  "/signup",
+  sanitizeSignupParams(),
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).send(errors.array());
+    }
+
+    const { email, password } = req.body;
+    res.send("creating user....");
+  }
+);
 
 router.post("/signin", (req: Request, res: Response) => {
   res.send("Hi there");

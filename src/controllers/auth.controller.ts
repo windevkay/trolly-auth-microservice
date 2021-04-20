@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 // All logic for auth routes
-export class AuthController {
+export default class AuthController {
   /**
    * Create an application user
    * @param params express request object
