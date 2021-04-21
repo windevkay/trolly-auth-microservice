@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 
 import AuthController from "../controllers/auth.controller";
 
+import { RequestValidationError, DatabaseConnectionError } from "../errors";
 import { sanitizeSignupParams } from "../middleware";
 
 const authController = new AuthController();
@@ -15,7 +16,7 @@ router.post(
   (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).send(errors.array());
+      throw new RequestValidationError(errors.array());
     }
 
     const { email, password } = req.body;
