@@ -1,6 +1,4 @@
-export interface UnifiedErrorStructure {
-  errors: {
-    message: string;
-    field?: string;
-  }[];
+export interface ErrorStructure {
+  message: string;
+  field?: string;
 }
