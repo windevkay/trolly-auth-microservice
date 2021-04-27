@@ -1,6 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { Application } from "express";
 import "express-async-errors";
 import { json } from "body-parser";
+import mongoose from "mongoose";
 
 import { authenticationRouter } from "./routes/auth.route";
 
@@ -21,6 +25,22 @@ app.all("*", () => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Authentication Service running on port ${PORT}`);
-});
+// connect to the mongo instance in k8s cluster and fire up server!
+const runServer = async () => {
+  try {
+    await mongoose.connect(`${process.env.MONGO_CLUSTER_ADDRESS}`, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+    });
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    console.error(err);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Authentication Service running on port ${PORT}`);
+  });
+};
+
+runServer();
