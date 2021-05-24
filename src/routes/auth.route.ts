@@ -3,7 +3,9 @@ import { validationResult } from "express-validator";
 
 import AuthController from "../controllers/auth.controller";
 
-import { RequestValidationError, DatabaseConnectionError } from "../errors";
+import { IUser } from "../models/user.model";
+
+import { RequestValidationError } from "../errors";
 import { sanitizeSignupParams } from "../middleware";
 
 const authController = new AuthController();
@@ -13,14 +15,14 @@ const router: Router = express.Router();
 router.post(
   "/signup",
   sanitizeSignupParams(),
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       throw new RequestValidationError(errors.array());
     }
 
-    const { email, password } = req.body;
-    res.send("creating user....");
+    const user: IUser = await authController.createUser({ req, res });
+    res.status(201).send(user);
   }
 );
 

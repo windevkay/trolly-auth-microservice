@@ -1,11 +1,30 @@
 import { Request, Response } from "express";
-// All logic for auth routes
+
+import { User, IUser } from "../models/user.model";
+
 export default class AuthController {
   /**
    * Create an application user
    * @param params express request object
    */
-  public createUser = async (params: { req: Request }) => {
-    const { req } = params;
+  public createUser = async (params: {
+    req: Request;
+    res: Response;
+  }): Promise<IUser> => {
+    const { req, res } = params;
+    const { email, password } = req.body;
+    try {
+      const userExists = await User.findOne({ email });
+      if (userExists) {
+        console.log("user already exists");
+        res.send({});
+      }
+      // create and save user
+      const user: IUser = User.build({ email, password });
+      const savedUser = await user.save();
+      return Promise.resolve(savedUser);
+    } catch (error) {
+      return Promise.reject(error);
+    }
   };
 }
