@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import { User, IUser } from "../models/user.model";
+import { BadRequestError } from "../errors";
 
 export default class AuthController {
   /**
@@ -16,8 +17,7 @@ export default class AuthController {
     try {
       const userExists = await User.findOne({ email });
       if (userExists) {
-        console.log("user already exists");
-        res.send({});
+        throw new BadRequestError("Email already in use");
       }
       // create and save user
       const user: IUser = User.build({ email, password });
