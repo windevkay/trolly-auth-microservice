@@ -1,5 +1,6 @@
 import express, { Router, Request, Response } from "express";
 import { validationResult } from "express-validator";
+import jwt from "jsonwebtoken";
 
 import AuthController from "../controllers/auth.controller";
 
@@ -22,6 +23,15 @@ router.post(
     }
 
     const user: IUser = await authController.createUser({ req, res });
+    const userJWT = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+      },
+      "asdf"
+    );
+    // store JWT in cookie-session
+    req.session!.jwt = userJWT;
     res.status(201).send(user);
   }
 );
