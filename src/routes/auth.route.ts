@@ -28,7 +28,7 @@ router.post(
         id: user.id,
         email: user.email,
       },
-      "asdf"
+      process.env.JWT_KEY!
     );
     // store JWT in cookie-session
     req.session!.jwt = userJWT;
