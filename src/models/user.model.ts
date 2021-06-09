@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-import { Password } from "../services";
+import { PasswordService } from "../services";
 
 interface UserAttributes {
   email: string;
@@ -13,21 +13,34 @@ interface UserModel extends Model<IUser> {
   build(params: UserAttributes): IUser;
 }
 
-const userSchema: Schema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
+const userSchema: Schema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
   },
-  password: {
-    type: String,
-    required: true,
-  },
-});
+  {
+    // restrict certain fields from being returned in JSON responses
+    toJSON: {
+      transform(doc, ret) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.password;
+        delete ret.__v;
+      },
+    },
+  }
+);
 
 userSchema.pre("save", async function (done) {
   if (this.isModified("password")) {
-    const hashed = await Password.toHash(this.get("password"));
+    const hashed = await PasswordService.toHash(this.get("password"));
     this.set("password", hashed);
   }
   done();

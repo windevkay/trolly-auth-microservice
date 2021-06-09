@@ -1,13 +1,13 @@
 import express, { Router, Request, Response } from "express";
-import { validationResult } from "express-validator";
-import jwt from "jsonwebtoken";
 
 import AuthController from "../controllers/auth.controller";
-
 import { IUser } from "../models/user.model";
-
-import { RequestValidationError } from "../errors";
-import { sanitizeSignupParams } from "../middleware";
+import {
+  sanitizeSignupParams,
+  sanitizeSigninParams,
+  validateRequest,
+} from "../middleware";
+import { setUserToken } from "../utils";
 
 const authController = new AuthController();
 
@@ -16,29 +16,24 @@ const router: Router = express.Router();
 router.post(
   "/signup",
   sanitizeSignupParams(),
+  validateRequest,
   async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new RequestValidationError(errors.array());
-    }
-
-    const user: IUser = await authController.createUser({ req, res });
-    const userJWT = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-      },
-      process.env.JWT_KEY!
-    );
-    // store JWT in cookie-session
-    req.session!.jwt = userJWT;
+    const user: IUser = await authController.createUser({ req });
+    setUserToken(req, user);
     res.status(201).send(user);
   }
 );
 
-router.post("/signin", (req: Request, res: Response) => {
-  res.send("Hi there");
-});
+router.post(
+  "/signin",
+  sanitizeSigninParams(),
+  validateRequest,
+  async (req: Request, res: Response) => {
+    const user: IUser = await authController.signInUser({ req });
+    setUserToken(req, user);
+    res.status(200).send(user);
+  }
+);
 
 router.post("/signout", (req: Request, res: Response) => {
   res.send("Hi there");
