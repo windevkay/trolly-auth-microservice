@@ -1,7 +1,26 @@
 import { Request, Response, NextFunction } from "express";
 import { body, validationResult } from "express-validator";
+import jwt from "jsonwebtoken";
 
-import { ErrorStructure, CustomError, RequestValidationError } from "../errors";
+import {
+  ErrorStructure,
+  CustomError,
+  RequestValidationError,
+  NotAuthorizedError,
+} from "../errors";
+
+interface UserPayload {
+  id: string;
+  email: string;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      currentUser?: UserPayload;
+    }
+  }
+}
 
 export const sanitizeSignupParams = () => {
   return [
@@ -46,6 +65,35 @@ export const validateRequest = (
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     throw new RequestValidationError(errors.array());
+  }
+  next();
+};
+
+export const currentUser = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.session?.jwt) {
+    next();
+  }
+  try {
+    const payload = jwt.verify(
+      req.session!.jwt,
+      process.env.JWT_KEY!
+    ) as UserPayload;
+    req.currentUser = payload;
+  } catch (error) {}
+  next();
+};
+
+export const requireAuth = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.currentUser) {
+    throw new NotAuthorizedError();
   }
   next();
 };

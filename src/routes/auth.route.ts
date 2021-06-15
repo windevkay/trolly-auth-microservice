@@ -6,6 +6,7 @@ import {
   sanitizeSignupParams,
   sanitizeSigninParams,
   validateRequest,
+  currentUser,
 } from "../middleware";
 import { setUserToken } from "../utils";
 
@@ -36,11 +37,13 @@ router.post(
 );
 
 router.post("/signout", (req: Request, res: Response) => {
-  res.send("Hi there");
+  // destroy the JWT in the cookie
+  req.session = null;
+  res.send({});
 });
 
-router.get("/currentuser", (req: Request, res: Response) => {
-  res.send("Hi there");
+router.get("/currentuser", currentUser, (req: Request, res: Response) => {
+  res.send({ currentUser: req.currentUser || null });
 });
 
 export { router as authenticationRouter };
