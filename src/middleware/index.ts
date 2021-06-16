@@ -21,7 +21,9 @@ declare global {
     }
   }
 }
-
+/**
+ * sanitize the params passed in during sign-up
+ */
 export const sanitizeSignupParams = () => {
   return [
     body("email").isEmail().withMessage("Email needs to be valid"),
@@ -31,7 +33,9 @@ export const sanitizeSignupParams = () => {
       .withMessage("Password must be between 4 and 20 characters"),
   ];
 };
-
+/**
+ * sanitize the params passed in during sign-in
+ */
 export const sanitizeSigninParams = () => {
   return [
     body("email").isEmail().withMessage("Email needs to be valid"),
@@ -41,7 +45,9 @@ export const sanitizeSigninParams = () => {
       .withMessage("You need to provide a password"),
   ];
 };
-
+/**
+ * Primary error handling middleware for the express app
+ */
 export const errorHandler = (
   err: Error,
   req: Request,
@@ -56,7 +62,9 @@ export const errorHandler = (
   //generic response for unknown error types
   res.status(400).send("something went wrong...");
 };
-
+/**
+ * error checking on request body fields
+ */
 export const validateRequest = (
   req: Request,
   res: Response,
@@ -68,7 +76,9 @@ export const validateRequest = (
   }
   next();
 };
-
+/**
+ * check the JWT status on current user and set currentUser on req
+ */
 export const currentUser = (
   req: Request,
   res: Response,
@@ -86,7 +96,9 @@ export const currentUser = (
   } catch (error) {}
   next();
 };
-
+/**
+ * check status of currentUser on req object
+ */
 export const requireAuth = (
   req: Request,
   res: Response,
