@@ -1,8 +1,8 @@
 import { Request } from "express";
+import { BadRequestError } from "@stagefirelabs/common";
 
 import { User, IUser } from "../models/user.model";
 import { PasswordService } from "../services";
-import { BadRequestError } from "../errors";
 
 export default class AuthController {
   /**

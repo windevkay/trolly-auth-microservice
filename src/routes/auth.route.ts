@@ -1,13 +1,14 @@
 import express, { Router, Request, Response } from "express";
-
-import AuthController from "../controllers/auth.controller";
-import { IUser } from "../models/user.model";
 import {
   sanitizeSignupParams,
   sanitizeSigninParams,
   validateRequest,
   currentUser,
-} from "../middleware";
+} from "@stagefirelabs/common";
+
+import AuthController from "../controllers/auth.controller";
+import { IUser } from "../models/user.model";
+
 import { setUserToken } from "../utils";
 
 const authController = new AuthController();

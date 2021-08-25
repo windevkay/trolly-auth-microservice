@@ -3,10 +3,9 @@ import "express-async-errors";
 import { json } from "body-parser";
 import cookieSession from "cookie-session";
 
-import { authenticationRouter } from "./routes/auth.route";
+import { errorHandler, NotFoundError } from "@stagefirelabs/common";
 
-import { errorHandler } from "./middleware";
-import { NotFoundError } from "./errors";
+import { authenticationRouter } from "./routes/auth.route";
 
 const app: Application = express();
 // allows proxys through ingress-NGINX
