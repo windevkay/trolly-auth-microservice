@@ -5,7 +5,7 @@ import cookieSession from "cookie-session";
 
 import { errorHandler, NotFoundError } from "@stagefirelabs/common";
 
-import { authenticationRouter } from "./routes/auth.route";
+import { ticketingRouter } from "./routes/ticketing.route";
 
 const app: Application = express();
 // allows proxys through ingress-NGINX
@@ -18,7 +18,7 @@ app.use(
   })
 );
 
-app.use("/api/users", authenticationRouter);
+app.use("/api/tickets", ticketingRouter);
 
 // handle unknown routes
 app.all("*", () => {

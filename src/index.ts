@@ -20,7 +20,7 @@ const runServer = async () => {
   }
 
   app.listen(PORT, () => {
-    console.log(`Authentication Service running on port ${PORT}`);
+    console.log(`Ticketing Service running on port ${PORT}`);
   });
 };
 
